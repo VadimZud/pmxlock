@@ -2,6 +2,7 @@ import os, fcntl
 from time import time, sleep
 from contextlib import AbstractContextManager
 from abc import abstractmethod
+from pathlib import Path
 
 
 class LockBase(AbstractContextManager):
@@ -97,8 +98,8 @@ class FLock(LockBase):
         return True
 
     def acquire(self, blocking=True, timeout=-1):
+        self.fd = None
         try:
-            self.fd = None
             self.fd = os.open(self.path, os.O_RDONLY | os.O_CREAT)
 
             acquire_res = super().acquire(blocking, timeout)
@@ -114,3 +115,64 @@ class FLock(LockBase):
     def release(self):
         os.close(self.locked_fd)
         self.locked_fd = None
+
+
+class PMXLockShort(PMXLock):
+    def acquire(self, blocking=True, timeout=-1):
+        try:
+            self.update()
+            return True
+        except (PermissionError, FileNotFoundError):
+            return super().acquire(blocking, timeout)
+
+
+class LocksChain(LockBase):
+    def __init__(self, *locks):
+        self.locks = locks
+
+    @staticmethod
+    def timeouts(timeout):
+        start = time()
+
+        while True:
+            if timeout <= 0:
+                yield timeout
+                continue
+
+            res = timeout - (time() - start)
+            if res < 0:
+                res = 0
+            yield res
+
+    @staticmethod
+    def release_locks(locks):
+        for lock in reversed(locks):
+            lock.release()
+
+    def acquire(self, blocking=True, timeout=-1):
+        timeouts = self.timeouts(timeout)
+        acquired = []
+        try:
+            for lock, timeout in zip(self.locks, timeouts):
+                if not lock.acquire(blocking, timeout):
+                    self.release_locks(acquired)
+                    return False
+                acquired.append(lock)
+            return True
+        except Exception:
+            self.release_locks(acquired)
+            raise
+
+    def release(self):
+        self.release_locks(self.locks)
+
+
+class ClusterLock(LocksChain):
+    flock_dir = Path("/run/lock/pmxlock")
+    pmxlock_dir = Path("/etc/pve/priv/lock")
+
+    def __init__(self, name):
+        self.flock_dir.mkdir(exist_ok=True)
+        super().__init__(
+            FLock(self.flock_dir / name), PMXLockShort(self.pmxlock_dir / name)
+        )
