@@ -173,6 +173,9 @@ class ClusterLock(LocksChain):
 
     def __init__(self, name):
         self.flock_dir.mkdir(exist_ok=True)
-        super().__init__(
-            FLock(self.flock_dir / name), PMXLockShort(self.pmxlock_dir / name)
-        )
+        self.flock = FLock(self.flock_dir / name)
+        self.pmxlock = PMXLockShort(self.pmxlock_dir / name)
+        super().__init__(self.flock, self.pmxlock)
+
+    def update(self):
+        self.pmxlock.update()
