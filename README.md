@@ -1,2 +1,2 @@
 # pmxlock
-Use cluster-wide Proxmox pmxcfs locks from shell
+Cluster-wide Proxmox pmxcfs locks.
