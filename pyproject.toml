@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pmxlock"
-version = "0.0.4"
+version = "0.0.5"
 authors = [
   { name="Vadim Zudin", email="zudinvadim@gmail.com" },
 ]
@@ -22,4 +22,4 @@ classifiers = [
 "Bug Tracker" = "https://github.com/VadimZud/pmxlock/issues"
 
 [project.scripts]
-pmxlock = "pmxlock:main"
+pmxlock = "pmxlock.cli.pmxlock:main"
