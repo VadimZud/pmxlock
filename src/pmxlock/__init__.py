@@ -98,18 +98,15 @@ class FLock(LockBase):
         return True
 
     def acquire(self, blocking=True, timeout=-1):
-        self.fd = None
+        self.fd = os.open(self.path, os.O_RDONLY | os.O_CREAT)
         try:
-            self.fd = os.open(self.path, os.O_RDONLY | os.O_CREAT)
-
             acquire_res = super().acquire(blocking, timeout)
 
             if acquire_res:
                 self.locked_fd = self.fd
             return acquire_res
         except Exception:
-            if self.fd is not None:
-                os.close(self.fd)
+            os.close(self.fd)
             raise
 
     def release(self):
@@ -139,10 +136,10 @@ class LocksChain(LockBase):
                 yield timeout
                 continue
 
-            res = timeout - (time() - start)
-            if res < 0:
-                res = 0
-            yield res
+            current_timeout = timeout - (time() - start)
+            if current_timeout <= 0:
+                timeout = current_timeout = 0
+            yield current_timeout
 
     @staticmethod
     def release_locks(locks):
