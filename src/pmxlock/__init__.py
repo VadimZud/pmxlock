@@ -124,7 +124,7 @@ class FLock(LockBase):
         self.locked_fd = None
 
 
-class PMXLockShort(PMXLock):
+class PMXRecoverableLock(PMXLock):
     def acquire(self, blocking=True, timeout=-1):
         try:
             self.update()
@@ -181,7 +181,7 @@ class ClusterLock(LocksChain):
     def __init__(self, name):
         self.flock_dir.mkdir(exist_ok=True)
         self.flock = FLock(self.flock_dir / name)
-        self.pmxlock = PMXLockShort(self.pmxlock_dir / name)
+        self.pmxlock = PMXRecoverableLock(self.pmxlock_dir / name)
         super().__init__(self.flock, self.pmxlock)
 
     def update(self):
