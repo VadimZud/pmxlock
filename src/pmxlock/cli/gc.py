@@ -1,6 +1,8 @@
+"""Release orphaned Proxmox cluster-wide locks on current node"""
+
 import sys
 from pathlib import Path
-from .. import ClusterLock
+from pmxlock import ClusterLock
 
 
 def main():

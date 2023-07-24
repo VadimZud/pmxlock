@@ -1,15 +1,17 @@
+"""Run command with Proxmox cluster-wide lock."""
+
 import argparse
 import sys
 import subprocess
 import shutil
-from .. import ClusterLock
+from pmxlock import ClusterLock
 
 PROXMOX_LOCK_EXPIRE_TIMEOUT = 120
 PROXMOX_LOCK_UPDATE_INTERVAL = PROXMOX_LOCK_EXPIRE_TIMEOUT * 0.8
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "-n",
         "--nb",
@@ -34,7 +36,9 @@ def main():
         type=int,
         default=1,
         metavar="number",
-        help="the exit status used when the -n option is in use, and the conflicting lock exists, or the -w option is in use, and the timeout is reached",
+        help=("the exit status used when the -n option is in use, "
+              "and the conflicting lock exists, or the -w option is in use, "
+              "and the timeout is reached"),
     )
     parser.add_argument("lock_name", help="name of lock")
     parser.add_argument("command", help="command")
