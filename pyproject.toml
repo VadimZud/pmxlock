@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pmxlock"
-version = "0.0.8"
+version = "1.0.0"
 authors = [{ name = "Vadim Zudin", email = "zudinvadim@gmail.com" }]
 description = "Cluster-wide Proxmox pmxcfs locks"
 readme = "README.md"
