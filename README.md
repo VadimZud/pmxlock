@@ -1,7 +1,7 @@
 # pmxlock
 Python classes and CLI tools for cluster-wide Proxmox pmxcfs locks.
 
-## Instalation
+## Installation
 Use `pip` for install:
 
 ```bash
@@ -91,7 +91,7 @@ You can use subprocess for it:
 ```python
 import subprocess
 
-with ClusterLock("mylockname"):
+with ClusterLock("mylockname") as lock:
     proc = subprocess.Popen(command)
     while True:
         try:
