@@ -15,6 +15,12 @@ Start simple command:
 pmxlock mylockname echo hello
 ```
 
+or
+
+```bash
+python3 -m pmxlock mylockname echo hello
+```
+
 Only one command with `mylockname` lock can run in current time in cluster.
 Other commands will be blocked until current command completes.
 
@@ -54,6 +60,12 @@ locks on current node.
 
 ```bash
 pmxlock-gc
+```
+
+or
+
+```bash
+python3 -m pmxlock.gc
 ```
 
 ## Class usage

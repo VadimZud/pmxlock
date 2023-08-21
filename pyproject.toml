@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pmxlock"
-version = "1.0.0"
+version = "1.1.0"
 authors = [{ name = "Vadim Zudin", email = "zudinvadim@gmail.com" }]
 description = "Cluster-wide Proxmox pmxcfs locks"
 readme = "README.md"
@@ -20,8 +20,8 @@ classifiers = [
 "Bug Tracker" = "https://github.com/VadimZud/pmxlock/issues"
 
 [project.scripts]
-pmxlock = "pmxlock.cli.pmxlock:main"
-pmxlock-gc = "pmxlock.cli.gc:main"
+pmxlock = "pmxlock.cli:main"
+pmxlock-gc = "pmxlock.gc:main"
 
 [tool.yapf]
 based_on_style = "google"

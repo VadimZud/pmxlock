@@ -1,10 +1,9 @@
 """Run command with Proxmox cluster-wide lock."""
 
 import argparse
-import sys
 import subprocess
 import shutil
-from pmxlock import ClusterLock
+from . import ClusterLock
 
 PROXMOX_LOCK_EXPIRE_TIMEOUT = 120
 PROXMOX_LOCK_UPDATE_INTERVAL = PROXMOX_LOCK_EXPIRE_TIMEOUT * 0.8
@@ -58,7 +57,3 @@ def main():
             lock.release()
     else:
         return args.conflict_exit_code
-
-
-if __name__ == "__main__":
-    sys.exit(main())
